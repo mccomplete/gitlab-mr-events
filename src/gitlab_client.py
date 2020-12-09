@@ -17,17 +17,9 @@ class MergeRequestID(NamedTuple):
     name: str
 
 
-def get_projects() -> List[Dict]:
+def get_merge_request(project_id: str, mrid: MergeRequestID) -> Optional[Dict]:
     response = _gitlab_api_request(
-        f"groups/{settings.GITLAB_GROUP_ID}/projects",
-        params={"scope": "all"},
-    )
-    return response.json()
-
-
-def get_merge_request(mrid: MergeRequestID) -> Optional[Dict]:
-    response = _gitlab_api_request(
-        f"groups/{settings.GITLAB_GROUP_ID}/merge_requests",
+        f"projects/{project_id}/merge_requests",
         {"scope": "all", "search": mrid.name, "in": "title"},
     )
     merge_requests = [
