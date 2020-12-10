@@ -25,7 +25,10 @@ def get_merge_requests(project_id):
     except ValueError:
         return _make_response_invalid_date(since)
 
-    logger.info(f"Getting merge requests JSON for project {project_id} since {since}")
+    logger.info(
+        f"Getting merge requests JSON for project {project_id} "
+        f"since {since if since else 'the beginning of time'}"
+    )
     response_json = merge_requests.get_merge_requests_json(project_id, since)
     logger.info(f"Returning JSON for {len(response_json)} merge requests")
     return make_response(json.dumps(response_json), 200)
