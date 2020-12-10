@@ -70,24 +70,18 @@ def _gitlab_api_request(endpoint, params):
 def _http_get(url, params, headers):
     response = requests.get(url, params=params, headers=headers)
     logger.info(
-        "GET request for %s with params %s returned in %s seconds",
-        url,
-        params,
-        response.elapsed.total_seconds(),
+        f"GET request for {url} with params {params} "
+        f"returned in {response.elapsed.total_seconds()} seconds",
     )
     response.raise_for_status()
     return response
 
 
 def _log_rate_limit(endpoint, params, response):
+    headers = response.headers
     logger.info(
-        (
-            "GET request for %s with params %s returned with rate limit %s requests per second, "
-            "%s requests so far, %s remaining"
-        ),
-        endpoint,
-        params,
-        response.headers["ratelimit-limit"],
-        response.headers["ratelimit-observed"],
-        response.headers["ratelimit-remaining"],
+        f"GET request for {endpoint} with params {params} "
+        f"returned with rate limit {headers['ratelimit-limit']} "
+        f"requests per second, {headers['ratelimit-observed']} "
+        f"requests so far, {headers['ratelimit-remaining']} remaining"
     )

@@ -14,13 +14,13 @@ thread_pool = ThreadPoolExecutor(max_workers=settings.NUMBER_OF_THREADS)
 
 
 def get_merge_requests_json(project_id: str, since: Optional[date]) -> List[Dict]:
-    logger.info("Getting events for project {project_id}")
+    logger.info(f"Getting events for project {project_id}")
     events = gitlab_client.get_events(project_id, since)
-    logger.info("Getting merge requests for %s events", len(events))
+    logger.info(f"Getting merge requests for {len(events)} events")
     merge_request_ids = _get_merge_request_ids(events)
     merge_requests = _get_merge_requests(project_id, merge_request_ids)
     logger.info(
-        "Assembling merge requests JSON from %s merge requests", len(merge_requests)
+        f"Assembling merge requests JSON from {len(merge_requests)} merge requests"
     )
     return _get_merge_requests_tree(events, merge_requests)
 
