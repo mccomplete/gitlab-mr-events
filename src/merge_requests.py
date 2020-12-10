@@ -38,10 +38,6 @@ def _get_merge_requests(
     ]
 
 
-def _get_project_ids(projects: List[Dict]) -> List[str]:
-    return [str(project["id"]) for project in projects]
-
-
 def _get_merge_requests_tree(
     events: List[Dict], merge_requests: List[Dict]
 ) -> List[Dict]:
