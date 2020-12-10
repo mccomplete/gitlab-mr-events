@@ -3,7 +3,7 @@ import logging
 from collections import defaultdict
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import date
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from src import settings, gitlab_client
 from src.gitlab_client import MergeRequestID
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 thread_pool = ThreadPoolExecutor(max_workers=settings.NUMBER_OF_THREADS)
 
 
-def get_merge_requests_json(project_id: str, since: date) -> List[Dict]:
+def get_merge_requests_json(project_id: str, since: Optional[date]) -> List[Dict]:
     logger.info("Getting events for project {project_id}")
     events = gitlab_client.get_events(project_id, since)
     logger.info("Getting merge requests for %s events", len(events))

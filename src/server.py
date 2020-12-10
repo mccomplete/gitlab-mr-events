@@ -14,11 +14,9 @@ logger = logging.getLogger(__name__)
 @app.route("/projects/<project_id>/merge_requests/", methods=["GET"])
 def get_merge_requests(project_id):
     logger.info(f"Handling GET /merge_requests for project {project_id}")
-    # If the client didn't pass a value for `since`, Flask will automatically
-    # return 400 here. Thanks Flask!
-    since = request.args["since"]
+    since = request.args.get("since")
     try:
-        since = datetime.strptime(since, "%Y-%m-%d")
+        since = datetime.strptime(since, "%Y-%m-%d") if since else None
     except ValueError:
         return _make_response_invalid_date(since)
 
