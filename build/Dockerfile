@@ -1,6 +1,6 @@
 FROM python:3.9.0
 
-WORKDIR gitlab-extractor
+WORKDIR gitlab-mr-events
 
 COPY requirements.txt .
 
