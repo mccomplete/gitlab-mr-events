@@ -7,8 +7,13 @@ from flask import Flask, make_response, request
 from src import merge_requests
 
 app = Flask(__name__)
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s %(message)s",
+    level=logging.INFO,
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 
 @app.route("/projects/<project_id>/merge_requests/", methods=["GET"])
