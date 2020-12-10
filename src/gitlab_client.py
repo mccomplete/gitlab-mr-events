@@ -35,8 +35,9 @@ def get_merge_request(project_id: str, mrid: MergeRequestID) -> Optional[Dict]:
 
 def get_events(project_id: str, since: Optional[date]) -> List[Dict]:
     page = 0
+    total_pages = None
     events = []
-    while True:
+    while (total_pages is None) or (page < total_pages):
         page += 1
         logger.info(
             f"Requesting page {page} of events from gitlab for project {project_id}"
@@ -47,8 +48,7 @@ def get_events(project_id: str, since: Optional[date]) -> List[Dict]:
 
         response = _gitlab_api_request(f"projects/{project_id}/events", params)
         events += response.json()
-        if int(response.headers["x-total-pages"]) == page:
-            break
+        total_pages = int(response.headers["x-total-pages"])
 
     return events
 
