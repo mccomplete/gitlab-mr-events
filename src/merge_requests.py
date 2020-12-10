@@ -59,7 +59,8 @@ def _get_merge_request_ids(events: List[Dict]) -> Set[MergeRequestID]:
 def _group_by_merge_request(events: List[Dict]) -> Mapping[str, List[Dict]]:
     index = defaultdict(list)
     for event in events:
-        index[str(event["target_id"])].append(event)
+        key = str(event["target_id"])
+        index[key].append(event)
 
     return index
 
