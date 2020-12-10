@@ -1,14 +1,14 @@
+import copy
 import functools
 import logging
 from collections import defaultdict
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import date
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Mapping, Set, Iterable
 
 from src import settings, gitlab_client
 from src.gitlab_client import MergeRequestID
 
-SUPPORTED_ACTIONS = ["opened", "closed", "reopened"]
 logger = logging.getLogger(__name__)
 thread_pool = ThreadPoolExecutor(max_workers=settings.NUMBER_OF_THREADS)
 
@@ -26,7 +26,7 @@ def get_merge_requests_json(project_id: str, since: Optional[date]) -> List[Dict
 
 
 def _get_merge_requests(
-    project_id: str, merge_request_ids: List[MergeRequestID]
+    project_id: str, merge_request_ids: Iterable[MergeRequestID]
 ) -> List[Dict]:
     return [
         merge_request
@@ -42,29 +42,30 @@ def _get_project_ids(projects: List[Dict]) -> List[str]:
     return [str(project["id"]) for project in projects]
 
 
-def _get_merge_requests_tree(events, merge_requests):
+def _get_merge_requests_tree(
+    events: List[Dict], merge_requests: List[Dict]
+) -> List[Dict]:
     events_index = _group_by_merge_request(events)
+    merge_requests = copy.deepcopy(merge_requests)
     for merge_request in merge_requests:
         merge_request["events"] = events_index[str(merge_request["id"])]
 
     return merge_requests
 
 
-def _get_merge_request_ids(events: List[Dict]) -> List[MergeRequestID]:
-    return list(
-        {
-            MergeRequestID(key=str(event["target_id"]), name=event["target_title"])
-            for event in events
-        }
-    )
+def _get_merge_request_ids(events: List[Dict]) -> Set[MergeRequestID]:
+    return {
+        MergeRequestID(key=str(event["target_id"]), name=event["target_title"])
+        for event in events
+    }
 
 
-def _group_by_merge_request(events: List[Dict]) -> Dict[str, List[Dict]]:
+def _group_by_merge_request(events: List[Dict]) -> Mapping[str, List[Dict]]:
     index = defaultdict(list)
     for event in events:
         index[str(event["target_id"])].append(event)
 
-    return dict(index)
+    return index
 
 
 def _key_by_project_id(projects: List[Dict]) -> Dict[str, Dict]:
