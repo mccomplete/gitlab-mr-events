@@ -63,7 +63,3 @@ def _group_by_merge_request(events: List[Dict]) -> Mapping[str, List[Dict]]:
         index[key].append(event)
 
     return index
-
-
-def _key_by_project_id(projects: List[Dict]) -> Dict[str, Dict]:
-    return {str(project["id"]): project for project in projects}
